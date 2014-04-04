@@ -1,7 +1,7 @@
 var Hapi = require('hapi');
 
 // create server with host and port
-var server = Hapi.createServer('localhost', 7000);
+var server = module.exports = Hapi.createServer('localhost', process.env.PORT || 7000);
 
 
 // home
