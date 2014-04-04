@@ -6,6 +6,16 @@ exports.register = function(plugin, options, next) {
   // Setup plugin model
   require('./model')(plugin);
 
+  plugin.views({
+    engines: {
+      html: 'handlebars'
+    },
+    path: './templates',
+    partialsPath: './templates',
+    layout: true,
+    layoutPath: './../homepage/templates'
+  });
+
   // coffeemaker routes
   plugin.route({
     method: 'GET',
@@ -18,7 +28,12 @@ exports.register = function(plugin, options, next) {
             return reply(Boom.notFound());
           }
 
-          reply(coffeeMakers);
+          reply.view('list', {
+            title: 'Coffeemakers',
+            list: coffeeMakers,
+            baseUrl: request.server.info.uri
+          });
+
         });
       },
       validate: {
@@ -35,13 +50,20 @@ exports.register = function(plugin, options, next) {
     config: {
       handler: function(request, reply){
 
-        plugin.methods.getCoffeemakerById(request.params.id, function (err, coffemaker) {
+        plugin.methods.getCoffeemakerById(request.params.id, function (err, coffeemaker) {
 
           if (err) {
             return reply(Boom.notFound());
           }
 
-          reply(coffemaker);
+          // reply(coffeemaker);
+
+          reply.view('view', {
+            title: coffeemaker ? coffeemaker.type : '',
+            view: coffeemaker,
+            baseUrl: request.server.info.uri
+          });
+
         });
 
       },
